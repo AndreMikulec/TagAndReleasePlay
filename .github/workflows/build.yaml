@@ -1,0 +1,144 @@
+name: Builds
+
+run-name: Builds - ${{ github.event.head_commit.message }}
+
+on:
+  push:
+    paths-ignore:
+      - '**.md'
+      - 'LICENSE'
+  pull_request:
+    paths-ignore:
+      - '**.md'
+      - 'LICENSE'
+  workflow_dispatch:
+  # GitHub Actions scheduled workflows (the on: schedule trigger) 
+  #   must exist on the default branch (usually main or master) of your repository to be triggered.
+  schedule:
+    # schedule
+    # '0 12 * * *'
+    # This is UTZ 12 noon
+    # https://github.com/BtbN/FFmpeg-Builds/blob/master/.github/workflows/build.yml
+    # + 2 hours to build
+    # https://github.com/BtbN/FFmpeg-Builds/releases
+    #
+    # My schedule is three(3) hours after the FFmpeg build starts
+    # UTC 15 
+#   - cron: '0 15 * * *'  # Runs daily at 3 p.m. UTZ time
+    - cron: '30 * * * *'  # Runs every hour at the 1/2 point in time
+    # github.event_name == 'schedule'
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    name: Build matid ${{ matrix.matid }}
+    runs-on: ${{ matrix.os }}
+    continue-on-error: ${{ matrix.GithubActionsIgnoreFail }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+
+        - matid: 01
+          os: windows-2025
+          GithubActionsIgnoreFail: false
+
+        - matid: 02
+          os: windows-2025
+          GithubActionsIgnoreFail: true
+          RunOnTimer: true
+
+    steps:
+
+    - name: Skip This Matrix Item matid ${{ matrix.matid }}
+      shell: bash
+      run: |
+        set -x -v -e
+        export  SKIP="${{ github.event_name == 'schedule' && matrix.RunOnTimer != 'true' && 'true' || 'false' }}"
+        if [ "${SKIP}" == "" ]; then export SKIP="notset" ; fi
+        echo "SKIP=${SKIP}" >> ${GITHUB_ENV}
+
+        echo "SKIP: ${SKIP}"
+
+
+    - name: General Shell Environment Variables made using Bash
+      if: >- 
+        ${{ env.SKIP != 'true' 
+        }}
+      shell: bash                     # redundant, because it is my defined matrix default
+      run: |
+        set -x -v -e
+
+        export TODAYSDATETIME=$(date +"%Y-%m-%d-%H-%M")
+        if [ "${TODAYSDATETIME}" == "" ]; then export TODAYSDATETIME="notset" ; fi
+        echo  "TODAYSDATETIME=${TODAYSDATETIME}" >> ${GITHUB_ENV}
+
+        echo  "TODAYSDATETIME: ${TODAYSDATETIME}"
+
+        export  HEAD7_GITHUB_SHA="$(echo "${GITHUB_SHA}" | cut -c -7)"
+        if [ "${HEAD7_GITHUB_SHA}" == "" ]; then export HEAD7_GITHUB_SHA="notset" ; fi
+        echo   "HEAD7_GITHUB_SHA=${HEAD7_GITHUB_SHA}" >> ${GITHUB_ENV}
+
+        echo   "HEAD7_GITHUB_SHA: ${HEAD7_GITHUB_SHA}"
+
+    - name: Make Artifacts and Place Them
+      if: >- 
+        ${{ env.SKIP != 'true' 
+        }}
+      shell: bash
+      run: |
+        mkdir Export
+        echo "matid=${{ matid }} Hello" > Export/test.txt
+
+
+    - name: Prep Artifacts
+      if: >- 
+        ${{ env.SKIP != 'true' 
+        }}
+      uses: thedoctor0/zip-release@0.7.5
+      with:
+        type: zip
+        directory: Export
+        filename: matid-${{ matrix.matid }}.zip
+      #
+      # directory
+      # Default: .
+      # The working directory 
+      #   where the zip or tar actually runs.
+      # path
+      # Default: .
+      # The path to the files or directory 
+      #   that should be archived, relative to directory.
+
+    - name: For Export Upload Artifact of matid-${{ matrix.matid }}
+      if: >- 
+        ${{ env.SKIP != 'true' 
+        }}
+      uses: actions/upload-artifact@v7
+      with:
+        name: matid-${{ matrix.matid }}
+        # default
+        # if-no-files-found: warn
+        path: |
+          Export/
+
+
+    # Note, ncipollo/release-action requires a tag
+    - name: For Distribution Release Artifacts of matid-${{ matrix.matid }}
+      if: >- 
+        ${{ env.SKIP != 'true' && ( 
+        ( github.event_name == 'schedule' || github.ref_type == 'tag' ) 
+        ) }}
+      uses: ncipollo/release-action@v1
+      with:
+        # in certain situations, the action will create a tag
+        tag: ${{ env.TODAYSDATETIME }}
+        # tag: ${{ ( github.ref_type == 'tag' && github.ref_name ) ||  env.TODAYSDATETIME }}
+        # commit: ${{ github.ref_name }}
+        allowUpdates: true
+        replacesArtifacts: true
+        artifacts: |
+          matid-${{ matrix.matid }}.zip
+        token: ${{ secrets.GITHUB_TOKEN }}
