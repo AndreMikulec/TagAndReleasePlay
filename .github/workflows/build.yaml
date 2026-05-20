@@ -97,10 +97,10 @@ jobs:
       if: >- 
         ${{ env.SKIP != 'true' 
         }}
-      uses: thedoctor0/zip-release@0.7.5
+      uses: thedoctor0/zip-release@v0.3.0
       with:
         type: zip
-        directory: Export
+        path: Export
         filename: matid-${{ matrix.matid }}.zip
       #
       # directory
