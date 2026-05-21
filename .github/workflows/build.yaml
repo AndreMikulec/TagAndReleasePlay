@@ -29,6 +29,10 @@ on:
     - cron: '*/5 * * * *'  # Runs every five minutes
     # github.event_name == 'schedule'
 
+    # Scheduled action never runs #185081
+    # JAN 23 2026
+    # https://github.com/orgs/community/discussions/185081#discussioncomment-15606848
+
 permissions:
   contents: write
 
@@ -125,7 +129,7 @@ jobs:
       with:
         # in certain situations, the action will create a tag
         # tag: ${{ env.TODAYSDATETIME }}
-        tag: "${{ env.TODAYSDATETIME }}-Scheduled-Distribution" 
+        tag: "${{ env.TODAYSDATETIME }}" 
         name: "${{ env.TODAYSDATETIME }}-Scheduled-Distribution"
         commit: ${{ github.sha }}
         body: "This is an automated release created on a schedule."
