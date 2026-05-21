@@ -125,8 +125,9 @@ jobs:
       with:
         # in certain situations, the action will create a tag
         # tag: ${{ env.TODAYSDATETIME }}
-        tag: "nightly-${{ github.sha }}" 
-        name: "${{ env.TODAYSDATETIME }}-matid-${{ matrix.matid }}.zip"
+        tag: "${{ env.TODAYSDATETIME }}-Scheduled-Distribution" 
+        name: "${{ env.TODAYSDATETIME }}-Scheduled-Distribution"
+        commit: ${{ github.sha }}
         body: "This is an automated release created on a schedule."
         # tag: ${{ github.sha }}-${{ github.event_name }}-${{ github.ref_type }}-${{ github.ref_name }}-${{ env.TODAYSDATETIME }}
         # commit: ${{ github.sha }}
@@ -138,15 +139,12 @@ jobs:
 
     # Note, ncipollo/release-action requires a tag
     - name: For Manual Distribution Release Artifacts of ${{ env.TODAYSDATETIME }}-matid-${{ matrix.matid }}.zip
-        # ${{ env.SKIP != 'true' && ( 
-        # ( github.event_name == 'schedule' || github.ref_type == 'tag' ) 
-        # ) }}
       if: github.ref_type == 'tag'
       uses: ncipollo/release-action@v1
       with:
         # in certain situations, the action will create a tag
         # tag: ${{ env.TODAYSDATETIME }}
-        name: "${{ env.TODAYSDATETIME }}-matid-${{ matrix.matid }}.zip"
+        name: "${{ env.TODAYSDATETIME }}-Manual-Distribution"
         body: "This is a manual release created on a maintainer."
         # tag: ${{ github.sha }}-${{ github.event_name }}-${{ github.ref_type }}-${{ github.ref_name }}-${{ env.TODAYSDATETIME }}
         # commit: ${{ github.sha }}
