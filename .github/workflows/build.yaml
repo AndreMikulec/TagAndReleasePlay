@@ -127,7 +127,7 @@ jobs:
         # tag: ${{ env.TODAYSDATETIME }}
         tag: ${{ github.ref_type == 'tag' && github.ref_name || env.TODAYSDATETIME }}
         # tag: ${{ ( github.ref_type == 'tag' && github.ref_name ) || env.TODAYSDATETIME }}
-        # commit: ${{ github.ref_name }}
+        commit: ${{ github.ref_name }}
         allowUpdates: true
         replacesArtifacts: true
         artifacts: |
