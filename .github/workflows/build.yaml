@@ -93,29 +93,28 @@ jobs:
         echo "${{ env.TODAYSDATETIME }}-matid-${{ matrix.matid }}" > Export/test.txt
 
 
-    - name: For Export Upload Artifact of ${{ env.TODAYSDATETIME }}-matid-${{ matrix.matid }}
+    - name: For Export Upload Artifact of ${{ env.TODAYSDATETIME }}-matid-${{ matrix.matid }}-${{ env.TODAYSDATETIME }}
       if: >- 
         ${{ env.SKIP != 'true' 
         }}
       uses: actions/upload-artifact@v7
       with:
-        name: ${{ env.TODAYSDATETIME }}-matid-${{ matrix.matid }}
-        # default
+        name: ${{ env.TODAYSDATETIME }}-matid-${{ matrix.matid }}-${{ env.TODAYSDATETIME }}
         # if-no-files-found: warn
         path: |
           Export/
 
 
-    - name: Prepare for Release Action create a new ${{ env.TODAYSDATETIME }}-matid-${{ matrix.matid }}.zip
+    - name: Prepare for Release Action create a new ${{ env.TODAYSDATETIME }}-matid-${{ matrix.matid }}-${{ env.TODAYSDATETIME }}
       if: >- 
         ${{ env.SKIP != 'true' 
         }}
       shell: bash
       run: |
-        7z a ${{ env.TODAYSDATETIME }}-matid-${{ matrix.matid }}.zip ./Export/*
+        7z a ${{ env.TODAYSDATETIME }}-matid-${{ matrix.matid }}-${{ env.TODAYSDATETIME }}.zip ./Export/*
 
     # Note, ncipollo/release-action requires a tag
-    - name: For Distribution Release Artifacts of matid-${{ matrix.matid }}
+    - name: For Distribution Release Artifacts of ${{ env.TODAYSDATETIME }}-matid-${{ matrix.matid }}-${{ env.TODAYSDATETIME }}
         # ${{ env.SKIP != 'true' && ( 
         # ( github.event_name == 'schedule' || github.ref_type == 'tag' ) 
         # ) }}
@@ -125,11 +124,11 @@ jobs:
       with:
         # in certain situations, the action will create a tag
         # tag: ${{ env.TODAYSDATETIME }}
-        tag: ${{ github.event_name }}_${{ github.ref_type }}_${{ github.ref_name }}_${{ env.TODAYSDATETIME }}
+        commit: ${{ github.event_name }}-${{ github.ref_type }}-${{ github.ref_name }}-${{ env.TODAYSDATETIME }}
         # tag: ${{ ( github.ref_type == 'tag' && github.ref_name ) || env.TODAYSDATETIME }}
         # commit: ${{ github.ref_name }}
         allowUpdates: true
         replacesArtifacts: true
         artifacts: |
-          ${{ env.TODAYSDATETIME }}-matid-${{ matrix.matid }}.zip
+          ${{ env.TODAYSDATETIME }}-matid-${{ matrix.matid }}-${{ env.TODAYSDATETIME }}.zip
         token: ${{ secrets.GITHUB_TOKEN }}
