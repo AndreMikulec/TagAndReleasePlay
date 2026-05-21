@@ -125,8 +125,9 @@ jobs:
       with:
         # in certain situations, the action will create a tag
         # tag: ${{ env.TODAYSDATETIME }}
-        tag: ${{ ( github.ref_type == 'tag' && github.ref_name ) ||  env.TODAYSDATETIME }}
-        commit: ${{ github.ref_name }}
+        tag: ${{ github.ref_type == 'tag' && github.ref_name || env.TODAYSDATETIME }}
+        # tag: ${{ ( github.ref_type == 'tag' && github.ref_name ) || env.TODAYSDATETIME }}
+        # commit: ${{ github.ref_name }}
         allowUpdates: true
         replacesArtifacts: true
         artifacts: |
