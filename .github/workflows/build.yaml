@@ -129,6 +129,8 @@ jobs:
         body: "This is an automated release created on a schedule."
         # tag: ${{ github.sha }}-${{ github.event_name }}-${{ github.ref_type }}-${{ github.ref_name }}-${{ env.TODAYSDATETIME }}
         # commit: ${{ github.sha }}
+        allowUpdates: true
+        replacesArtifacts: true
         artifacts: |
           matid-${{ matrix.matid }}-${{ github.sha }}-${{ env.TODAYSDATETIME }}.zip
         token: ${{ secrets.GITHUB_TOKEN }}
@@ -150,6 +152,8 @@ jobs:
         body: "This is a manual release created on a maintainer."
         # tag: ${{ github.sha }}-${{ github.event_name }}-${{ github.ref_type }}-${{ github.ref_name }}-${{ env.TODAYSDATETIME }}
         # commit: ${{ github.sha }}
+        allowUpdates: true
+        replacesArtifacts: true
         artifacts: |
           matid-${{ matrix.matid }}-${{ github.sha }}-${{ env.TODAYSDATETIME }}.zip
         token: ${{ secrets.GITHUB_TOKEN }}
