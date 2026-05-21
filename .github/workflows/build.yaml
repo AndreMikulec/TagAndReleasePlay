@@ -92,25 +92,14 @@ jobs:
         mkdir Export
         echo "matid=${{ matrix.matid }} Hello" > Export/test.txt
 
-
-    - name: Prep Artifacts
+    - name: Combine Artifacts
       if: >- 
         ${{ env.SKIP != 'true' 
         }}
-      uses: thedoctor0/zip-release@v0.3.0
-      with:
-        type: zip
-        directory: Export
-        filename: matid-${{ matrix.matid }}.zip
-      #
-      # directory
-      # Default: .
-      # The working directory 
-      #   where the zip or tar actually runs.
-      # path
-      # Default: .
-      # The path to the files or directory 
-      #   that should be archived, relative to directory.
+      shell: bash
+      run: |
+        7z a matid-${{ matrix.matid }}.zip Export/*
+
 
     - name: For Export Upload Artifact of matid-${{ matrix.matid }}
       if: >- 
