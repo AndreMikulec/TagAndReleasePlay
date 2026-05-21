@@ -25,7 +25,8 @@ on:
     # My schedule is three(3) hours after the FFmpeg build starts
     # UTC 15 
 #   - cron: '0 15 * * *'  # Runs daily at 3 p.m. UTZ time
-    - cron: '30 * * * *'  # Runs every hour at the 1/2 point in time
+#   - cron: '30 * * * *'  # Runs every hour at the 1/2 point in time
+    - cron: '*/5 * * * *'  # Runs every five minutes
     # github.event_name == 'schedule'
 
 permissions:
@@ -90,31 +91,31 @@ jobs:
       shell: bash
       run: |
         mkdir Export
-        echo "${{ env.TODAYSDATETIME }}-matid-${{ matrix.matid }}" > Export/test.txt
+        echo "matid-${{ matrix.matid }}-${{ env.TODAYSDATETIME }}" > Export/matid-${{ matrix.matid }}-${{ env.TODAYSDATETIME }}.txt
 
 
-    - name: For Export Upload Artifact of ${{ env.TODAYSDATETIME }}-matid-${{ matrix.matid }}-${{ env.TODAYSDATETIME }}
+    - name: For Export Upload Artifact of matid-${{ matrix.matid }}-${{ env.TODAYSDATETIME }}
       if: >- 
         ${{ env.SKIP != 'true' 
         }}
       uses: actions/upload-artifact@v7
       with:
-        name: ${{ matrix.matid }}-${{ github.sha }}-${{ env.TODAYSDATETIME }}
+        name: matid-${{ matrix.matid }}-${{ env.TODAYSDATETIME }}
         # if-no-files-found: warn
         path: |
           Export/
 
 
-    - name: Prepare for Release Action create a new matid-${{ matrix.matid }}-${{ github.sha }}-${{ env.TODAYSDATETIME }}.zip
+    - name: Prepare for Release Action create a new matid-${{ matrix.matid }}-${{ env.TODAYSDATETIME }}.zip
       if: >- 
         ${{ env.SKIP != 'true' 
         }}
       shell: bash
       run: |
-        7z a matid-${{ matrix.matid }}-${{ github.sha }}-${{ env.TODAYSDATETIME }}.zip ./Export/*
+        7z a matid-${{ matrix.matid }}-${{ env.TODAYSDATETIME }}.zip ./Export/*
 
     # Note, ncipollo/release-action requires a tag
-    - name: For Scheduled Distribution Release Artifacts of matid-${{ matrix.matid }}-${{ github.sha }}-${{ env.TODAYSDATETIME }}.zip
+    - name: For Scheduled Distribution Release Artifacts of matid-${{ matrix.matid }}-${{ env.TODAYSDATETIME }}.zip
         # ${{ env.SKIP != 'true' && ( 
         # ( github.event_name == 'schedule' || github.ref_type == 'tag' ) 
         # ) }}
@@ -125,36 +126,34 @@ jobs:
         # in certain situations, the action will create a tag
         # tag: ${{ env.TODAYSDATETIME }}
         tag: "nightly-${{ github.sha }}" 
-        name: "Scheduled Release - ${{ github.run_number }}"
+        name: "matid-${{ matrix.matid }}-${{ env.TODAYSDATETIME }}.zip"
         body: "This is an automated release created on a schedule."
         # tag: ${{ github.sha }}-${{ github.event_name }}-${{ github.ref_type }}-${{ github.ref_name }}-${{ env.TODAYSDATETIME }}
         # commit: ${{ github.sha }}
         allowUpdates: true
         replacesArtifacts: true
         artifacts: |
-          matid-${{ matrix.matid }}-${{ github.sha }}-${{ env.TODAYSDATETIME }}.zip
+          matid-${{ matrix.matid }}-${{ env.TODAYSDATETIME }}.zip
         token: ${{ secrets.GITHUB_TOKEN }}
 
     # Note, ncipollo/release-action requires a tag
-    - name: For Manual Distribution Release Artifacts of matid-${{ matrix.matid }}-${{ github.sha }}-${{ env.TODAYSDATETIME }}.zip
+    - name: For Manual Distribution Release Artifacts of matid-${{ matrix.matid }}-${{ env.TODAYSDATETIME }}.zip
         # ${{ env.SKIP != 'true' && ( 
         # ( github.event_name == 'schedule' || github.ref_type == 'tag' ) 
         # ) }}
-      if: >- 
-        ${{ github.ref_type == 'tag' }}
+      if: github.ref_type == 'tag'
       uses: ncipollo/release-action@v1
       with:
         # in certain situations, the action will create a tag
         # tag: ${{ env.TODAYSDATETIME }}
-        tag: "ondemand-${{ github.sha }}" 
-        name: "Manual Release - ${{ github.run_number }}"
+        name: "matid-${{ matrix.matid }}-${{ env.TODAYSDATETIME }}.zip"
         body: "This is a manual release created on a maintainer."
         # tag: ${{ github.sha }}-${{ github.event_name }}-${{ github.ref_type }}-${{ github.ref_name }}-${{ env.TODAYSDATETIME }}
         # commit: ${{ github.sha }}
         allowUpdates: true
         replacesArtifacts: true
         artifacts: |
-          matid-${{ matrix.matid }}-${{ github.sha }}-${{ env.TODAYSDATETIME }}.zip
+          matid-${{ matrix.matid }}-${{ env.TODAYSDATETIME }}.zip
         token: ${{ secrets.GITHUB_TOKEN }}
 
 
