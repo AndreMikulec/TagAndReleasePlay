@@ -92,27 +92,27 @@ jobs:
         mkdir Export
         echo "matid=${{ matrix.matid }} Hello" > Export/test.txt
 
-    - name: Combine Artifacts
-      if: >- 
-        ${{ env.SKIP != 'true' 
-        }}
-      shell: bash
-      run: |
-        7z a matid-${{ matrix.matid }}.zip Export/*
 
-
-    - name: For Export Upload Artifact of matid-${{ matrix.matid }}
+    - name: For Export Upload Artifact of ${{ env.TODAYSDATETIME }}-matid-${{ matrix.matid }}
       if: >- 
         ${{ env.SKIP != 'true' 
         }}
       uses: actions/upload-artifact@v7
       with:
-        name: matid-${{ matrix.matid }}
+        name: ${{ env.TODAYSDATETIME }}-matid-${{ matrix.matid }}
         # default
         # if-no-files-found: warn
         path: |
-          matid-${{ matrix.matid }}.zip
+          Export/
 
+
+    - name: Prepare for Release Action create a new ${{ env.TODAYSDATETIME }}-matid-${{ matrix.matid }}.zip
+      if: >- 
+        ${{ env.SKIP != 'true' 
+        }}
+      shell: bash
+      run: |
+        7z a ${{ env.TODAYSDATETIME }}-matid-${{ matrix.matid }}.zip Export/
 
     # Note, ncipollo/release-action requires a tag
     - name: For Distribution Release Artifacts of matid-${{ matrix.matid }}
@@ -129,5 +129,5 @@ jobs:
         allowUpdates: true
         replacesArtifacts: true
         artifacts: |
-          matid-${{ matrix.matid }}.zip
+          ${{ env.TODAYSDATETIME }}-matid-${{ matrix.matid }}.zip
         token: ${{ secrets.GITHUB_TOKEN }}
