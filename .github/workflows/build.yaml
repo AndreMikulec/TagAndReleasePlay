@@ -124,10 +124,10 @@ jobs:
       with:
         # in certain situations, the action will create a tag
         # tag: ${{ env.TODAYSDATETIME }}
-        # tag: ${{ github.sha }}-${{ github.ref_type }}-${{ github.ref_name }}-${{ env.TODAYSDATETIME }}
+        tag: ${{ github.sha }}-${{ github.event_name }}-${{ github.ref_type }}-${{ github.ref_name }}-${{ env.TODAYSDATETIME }}
         commit: ${{ github.sha }}
-        allowUpdates: true
-        replacesArtifacts: true
+        allowUpdates: false
+        replacesArtifacts: false
         artifacts: |
           matid-${{ matrix.matid }}-${{ github.sha }}-${{ env.TODAYSDATETIME }}.zip
         token: ${{ secrets.GITHUB_TOKEN }}
