@@ -116,10 +116,10 @@ jobs:
 
     # Note, ncipollo/release-action requires a tag
     - name: For Distribution Release Artifacts of matid-${{ matrix.matid }}
-      if: >- 
         # ${{ env.SKIP != 'true' && ( 
         # ( github.event_name == 'schedule' || github.ref_type == 'tag' ) 
         # ) }}
+      if: >- 
         ${{ env.SKIP != 'true' }}
       uses: ncipollo/release-action@v1
       with:
