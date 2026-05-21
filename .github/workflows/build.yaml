@@ -105,16 +105,16 @@ jobs:
           Export/
 
 
-    - name: Prepare for Release Action create a new ${{ matrix.matid }}-${{ github.sha }}-${{ env.TODAYSDATETIME }}
+    - name: Prepare for Release Action create a new matid-${{ matrix.matid }}-${{ github.sha }}-${{ env.TODAYSDATETIME }}.zip
       if: >- 
         ${{ env.SKIP != 'true' 
         }}
       shell: bash
       run: |
-        7z a ${{ matrix.matid }}-${{ github.sha }}-${{ env.TODAYSDATETIME }}.zip ./Export/*
+        7z a matid-${{ matrix.matid }}-${{ github.sha }}-${{ env.TODAYSDATETIME }}.zip ./Export/*
 
     # Note, ncipollo/release-action requires a tag
-    - name: For Scheduled Distribution Release Artifacts of ${{ matrix.matid }}-${{ github.sha }}-${{ env.TODAYSDATETIME }}
+    - name: For Scheduled Distribution Release Artifacts of matid-${{ matrix.matid }}-${{ github.sha }}-${{ env.TODAYSDATETIME }}.zip
         # ${{ env.SKIP != 'true' && ( 
         # ( github.event_name == 'schedule' || github.ref_type == 'tag' ) 
         # ) }}
@@ -136,13 +136,12 @@ jobs:
         token: ${{ secrets.GITHUB_TOKEN }}
 
     # Note, ncipollo/release-action requires a tag
-    - name: For Tagged Distribution Release Artifacts of ${{ matrix.matid }}-${{ github.sha }}-${{ env.TODAYSDATETIME }}
+    - name: For Manual Distribution Release Artifacts of matid-${{ matrix.matid }}-${{ github.sha }}-${{ env.TODAYSDATETIME }}.zip
         # ${{ env.SKIP != 'true' && ( 
         # ( github.event_name == 'schedule' || github.ref_type == 'tag' ) 
         # ) }}
       if: >- 
-        ${{ env.SKIP != 'true' && ( 
-        github.event_name == 'push' || github.event_name == 'pull_request' || github.event_name == 'workflow_dispatch' ) }}
+        ${{ env.SKIP != 'true' &&  github.event_name != 'schedule' }}
       uses: ncipollo/release-action@v1
       with:
         # in certain situations, the action will create a tag
