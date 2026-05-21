@@ -141,7 +141,7 @@ jobs:
         # ( github.event_name == 'schedule' || github.ref_type == 'tag' ) 
         # ) }}
       if: >- 
-        ${{ env.SKIP != 'true' &&  github.event_name != 'schedule' }}
+        ${{ github.ref_type == 'tag' }}
       uses: ncipollo/release-action@v1
       with:
         # in certain situations, the action will create a tag
