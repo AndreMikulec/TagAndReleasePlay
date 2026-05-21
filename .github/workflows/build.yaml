@@ -125,7 +125,7 @@ jobs:
       with:
         # in certain situations, the action will create a tag
         # tag: ${{ env.TODAYSDATETIME }}
-        tag: ${{ github.event_name != 'schedule' && github.ref_name || env.TODAYSDATETIME }}
+        tag: ${{ github.event_name }}_${{ github.ref_type }}_${{ github.ref_name }}_${{ env.TODAYSDATETIME }}
         # tag: ${{ ( github.ref_type == 'tag' && github.ref_name ) || env.TODAYSDATETIME }}
         # commit: ${{ github.ref_name }}
         allowUpdates: true
