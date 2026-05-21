@@ -100,7 +100,7 @@ jobs:
       uses: thedoctor0/zip-release@v0.3.0
       with:
         type: zip
-        path: Export
+        directory: Export
         filename: matid-${{ matrix.matid }}.zip
       #
       # directory
@@ -122,7 +122,8 @@ jobs:
         # default
         # if-no-files-found: warn
         path: |
-          Export/
+        # Export/
+          matid-${{ matrix.matid }}.zip
 
 
     # Note, ncipollo/release-action requires a tag
