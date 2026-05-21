@@ -124,7 +124,7 @@ jobs:
       with:
         # in certain situations, the action will create a tag
         # tag: ${{ env.TODAYSDATETIME }}
-        commit: ${{ github.event_name }}-${{ github.ref_type }}-${{ github.ref_name }}-${{ env.TODAYSDATETIME }}
+        commit: HEAD
         # tag: ${{ ( github.ref_type == 'tag' && github.ref_name ) || env.TODAYSDATETIME }}
         # commit: ${{ github.ref_name }}
         allowUpdates: true
