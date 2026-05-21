@@ -112,7 +112,7 @@ jobs:
         }}
       shell: bash
       run: |
-        7z a ${{ env.TODAYSDATETIME }}-matid-${{ matrix.matid }}.zip Export/
+        7z a ${{ env.TODAYSDATETIME }}-matid-${{ matrix.matid }}.zip Export/*
 
     # Note, ncipollo/release-action requires a tag
     - name: For Distribution Release Artifacts of matid-${{ matrix.matid }}
