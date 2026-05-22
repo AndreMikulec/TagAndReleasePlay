@@ -7,13 +7,16 @@ on:
     paths-ignore:
       - '**.md'
       - 'LICENSE'
+
   pull_request:
     paths-ignore:
       - '**.md'
       - 'LICENSE'
+
   workflow_dispatch:
   # GitHub Actions scheduled workflows (the on: schedule trigger) 
   #   must exist on the default branch (usually main or master) of your repository to be triggered.
+
   schedule:
     # schedule
     # '0 12 * * *'
@@ -24,11 +27,11 @@ on:
     #
     # My schedule is three(3) hours after the FFmpeg build starts
     # UTC 15 
-#   - cron: '0 15 * * *'  # Runs daily at 3 p.m. UTZ time
+    - cron: '0 15 * * *'  # Runs daily at 3 p.m. UTZ time
 #   - cron: '30 * * * *'  # Runs every hour at the 1/2 point in time
-    - cron: '*/5 * * * *'  # Runs every five minutes
+#   - cron: '*/5 * * * *'  # Runs every five minutes
     # github.event_name == 'schedule'
-
+    #
     # Scheduled action never runs #185081
     # JAN 23 2026
     # https://github.com/orgs/community/discussions/185081#discussioncomment-15606848
@@ -76,7 +79,7 @@ jobs:
       run: |
         set -x -v -e
 
-        export TODAYSDATETIME=$(date +"%Y-%m-%d-%H-%M")
+        export TODAYSDATETIME=$(date -u +"%Y-%m-%d-%H-%M")
         if [ "${TODAYSDATETIME}" == "" ]; then export TODAYSDATETIME="notset" ; fi
         echo  "TODAYSDATETIME=${TODAYSDATETIME}" >> ${GITHUB_ENV}
 
@@ -158,4 +161,20 @@ jobs:
           ${{ env.TODAYSDATETIME }}-matid-${{ matrix.matid }}.zip
         token: ${{ secrets.GITHUB_TOKEN }}
 
+    # Note, ncipollo/release-action requires a tag
+    - name: For Manual Distribution Release Artifacts of ${{ env.TODAYSDATETIME }}-matid-${{ matrix.matid }}.zip
+      if: github.ref_type == 'tag'
+      uses: ncipollo/release-action@v1
+      with:
+        # in certain situations, the action will create a tag
+        # tag: ${{ env.TODAYSDATETIME }}
+        name: "${{ env.TODAYSDATETIME }}-Manual-Distribution"
+        body: "This is a manual release created on a maintainer."
+        # tag: ${{ github.sha }}-${{ github.event_name }}-${{ github.ref_type }}-${{ github.ref_name }}-${{ env.TODAYSDATETIME }}
+        # commit: ${{ github.sha }}
+        allowUpdates: true
+        replacesArtifacts: true
+        artifacts: |
+          ${{ env.TODAYSDATETIME }}-matid-${{ matrix.matid }}.zip
+        token: ${{ secrets.GITHUB_TOKEN }}
 
