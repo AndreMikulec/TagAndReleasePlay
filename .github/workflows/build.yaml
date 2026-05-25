@@ -100,7 +100,7 @@ jobs:
         set -x -v -e
 
         export TAGSSKIP="notset"
-        export TAGSSKIP="${{ github.ref_type == 'tag' && contains( github.ref_name , 'SKIP' )  && 'true' || 'false' }}
+        export TAGSSKIP="${{ github.ref_type == 'tag' && contains( github.ref_name , 'SKIP' )  && 'true' || 'false' }}"
         echo  "TAGSSKIP=${SKIP}" >> ${GITHUB_ENV} 
 
         echo  "TAGISSKIP: ${SKIP}" 
