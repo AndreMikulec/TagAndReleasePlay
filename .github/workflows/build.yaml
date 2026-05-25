@@ -99,11 +99,11 @@ jobs:
       run: |
         set -x -v -e
 
-        export TAGSSKIP="notset"
-        export TAGSSKIP="${{ github.ref_type == 'tag' && contains( github.ref_name , 'SKIP' )  && 'true' || 'false' }}"
-        echo  "TAGSSKIP=${SKIP}" >> ${GITHUB_ENV} 
+        export TAGSKIP="notset"
+        export TAGSKIP="${{ github.ref_type == 'tag' && contains( github.ref_name , 'SKIP' )  && 'true' || 'false' }}"
+        echo  "TAGSKIP=${TAGSKIP}" >> ${GITHUB_ENV} 
 
-        echo  "TAGISSKIP: ${SKIP}" 
+        echo  "TAGSKIP: ${TAGSKIP}" 
 
 
     - name: Get .env
@@ -113,7 +113,7 @@ jobs:
       shell: bash                     # redundant, because it is my defined matrix default
       run: |
         set -x -v -e
-        echo "TAGSSKIP: ${{ env.TAGSKIP }}" 
+        echo "TAGSKIP: ${{ env.TAGSKIP }}" 
 
 
     - name: Make Artifacts and Place Them
