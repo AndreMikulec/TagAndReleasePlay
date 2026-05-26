@@ -40,8 +40,27 @@ permissions:
   contents: write
 
 jobs:
+
+  setup:
+    runs-on: windows-2025
+    steps:
+    - name: Pre-build check
+      id: build_check
+      shell: bash
+      run: |
+        echo "BEGIN Pre-build check"
+        set -x -v -e
+        run: echo "Preparing environment..."
+
+        echo  "SETUP=from_setup" >> ${GITHUB_OUTPUT} 
+
+        echo "END   Pre-build check"
+    
+    outputs:
+      SETUPGOOD_OUTPUT: ${{ steps.build_check.outputs.SETUP }}
+
   build:
-    name: Build matid ${{ matrix.matid }}
+    name: Build matid ${{ matrix.matid }} ${{  needs.setup.outputs.SETUPGOOD_OUTPUT }}
     runs-on: ${{ matrix.os }}
     continue-on-error: ${{ matrix.GithubActionsIgnoreFail }}
     strategy:
