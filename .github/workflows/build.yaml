@@ -50,9 +50,9 @@ jobs:
       run: |
         echo "BEGIN Pre-build check"
         set -x -v -e
-        run: echo "Preparing environment..."
+        echo "Preparing environment..."
 
-        echo  "SETUP=from_setup" >> ${GITHUB_OUTPUT} 
+        echo "SETUP=from_setup" >> ${GITHUB_OUTPUT} 
 
         echo "END   Pre-build check"
     
