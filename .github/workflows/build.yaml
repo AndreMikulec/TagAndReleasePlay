@@ -42,18 +42,18 @@ permissions:
 
 jobs:
 
-  job1:
+  setup:
     runs-on: ubuntu-latest
-    outputs:
-      output1: ${{ steps.step1.outputs.test }}
     steps:
       - id: step1
-        run: echo "test=hello" >> "$GITHUB_OUTPUT"
+        run: echo "LOCAL=hello" >> "$GITHUB_OUTPUT"
+    outputs:
+      PUBLIC: ${{ steps.step1.outputs.LOCAL }}
 
   build:
-    name: Build matid ${{ matrix.matid }} ${{ needs.job1.outputs.output1 }}
+    name: Build matid ${{ matrix.matid }} ${{ needs.setup.outputs.PUBLIC }}
     runs-on: ${{ matrix.os }}
-    needs: job1
+    needs: setup
     continue-on-error: ${{ matrix.GithubActionsIgnoreFail }}
     strategy:
       fail-fast: false
@@ -61,7 +61,7 @@ jobs:
         include:
 
         - matid: 01
-          os: ubuntu-latest
+          os: windows-latest
           GithubActionsIgnoreFail: false
 
         - matid: 02
