@@ -39,29 +39,21 @@ on:
 permissions:
   contents: write
 
+
 jobs:
 
-  setup:
-    runs-on: windows-2025
-    steps:
-    - name: Pre-build check
-      id: build_check
-      shell: bash
-      run: |
-        echo "BEGIN Pre-build check"
-        set -x -v -e
-        echo "Preparing environment..."
-
-        echo "SETUP=from_setup" >> ${GITHUB_OUTPUT} 
-
-        echo "END   Pre-build check"
-    
+  job1:
+    runs-on: ubuntu-latest
     outputs:
-      SETUPGOOD_OUTPUT: ${{ steps.build_check.outputs.SETUP }}
+      output1: ${{ steps.step1.outputs.test }}
+    steps:
+      - id: step1
+        run: echo "test=hello" >> "$GITHUB_OUTPUT"
 
   build:
-    name: Build matid ${{ matrix.matid }} ${{  needs.setup.outputs.SETUPGOOD_OUTPUT }}
+    name: Build matid ${{ matrix.matid }} ${{ needs.job1.outputs.output1 }}
     runs-on: ${{ matrix.os }}
+    needs: job1
     continue-on-error: ${{ matrix.GithubActionsIgnoreFail }}
     strategy:
       fail-fast: false
@@ -69,11 +61,11 @@ jobs:
         include:
 
         - matid: 01
-          os: windows-2025
+          os: ubuntu-latest
           GithubActionsIgnoreFail: false
 
         - matid: 02
-          os: windows-2025
+          os: ubuntu-latest
           GithubActionsIgnoreFail: true
           RunOnTimer: true
 
