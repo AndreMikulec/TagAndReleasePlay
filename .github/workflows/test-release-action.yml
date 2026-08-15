@@ -14,7 +14,6 @@ jobs:
     runs-on: windows-2025-vs2026
     steps:
       - name: Windows Machine Stats system information
-        if: ${{ matrix.os == 'windows-2025-vs2026' }}
         shell: cmd
         run: |
           systeminfo > systeminfo.txt
