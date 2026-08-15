@@ -8,15 +8,10 @@ on:
    push:
    pull_request:
    workflow_dispatch:
-    strategy:
-      matrix:
-        include:
-          - matid: '01'
-            os: windows-2025-vs2026
 
 jobs:
   test_release_assets:
-    runs-on: ${{ matrix.os }}
+    runs-on: windows-2025-vs2026
     steps:
       - name: Windows Machine Stats system information
         if: ${{ matrix.os == 'windows-2025-vs2026' }}
